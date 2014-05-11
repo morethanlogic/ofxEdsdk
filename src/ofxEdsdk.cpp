@@ -196,6 +196,57 @@ namespace ofxEdsdk {
 			}
 		}
 	}
+    
+    
+    
+    
+    void Camera::setPathForVideo()
+    {
+        EdsError err = EDS_ERR_OK;
+        
+        EdsUInt32 saveTo = kEdsSaveTo_Camera;
+        err = EdsSetPropertyData(camera, kEdsPropID_SaveTo, 0, sizeof(saveTo) , &saveTo);
+        
+        if(err == EDS_ERR_OK){
+            ofLog() << "setPathForVideo() OK" << endl;
+        } else {
+            ofLog() << "setPathForVideo() BAD" << endl;
+        }
+    }
+    
+    void Camera::startRecordVideo()
+    {
+        //setPathForVideo();
+        
+        EdsError err = EDS_ERR_OK;
+        
+        EdsUInt32 record_start = 4; // Begin movie shooting
+        err = EdsSetPropertyData(camera, kEdsPropID_Record, 0, sizeof(record_start), &record_start);
+        
+        if(err == EDS_ERR_OK){
+            ofLog() << "startRecordVideo() OK" << endl;
+        } else {
+            ofLog() << "startRecordVideo() BAD" << endl;
+        }
+    }
+    
+    void Camera::stopRecordVideo()
+    {
+        EdsError err = EDS_ERR_OK;
+        
+        EdsUInt32 record_stop = 0; // End movie shooting
+        err = EdsSetPropertyData(camera, kEdsPropID_Record, 0, sizeof(record_stop), &record_stop);
+        
+        if(err == EDS_ERR_OK){
+            ofLog() << "stopRecordVideo() OK" << endl;
+        } else {
+            ofLog() << "stopRecordVideo() BAD" << endl;
+        }
+    }
+    
+    
+    
+    
 	
 	ofPixels& Camera::getLivePixels() {
 		return livePixels;
