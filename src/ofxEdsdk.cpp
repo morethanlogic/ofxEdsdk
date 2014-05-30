@@ -94,8 +94,10 @@ namespace ofxEdsdk {
 		}
 	}
 	
-	bool Camera::setup(int deviceId) {
+	bool Camera::setup(int deviceId, int orientationMode90) {
 		try {
+            rotateMode90 = orientationMode90;
+            
 			Eds::InitializeSDK();
 			
 			EdsCameraListRef cameraList;
@@ -145,6 +147,8 @@ namespace ofxEdsdk {
 			liveBufferMiddle.pop();
 			unlock();
 			ofLoadImage(livePixels, liveBufferFront);
+            livePixels.rotate90(rotateMode90);
+
 			if(liveTexture.getWidth() != livePixels.getWidth() ||
 				 liveTexture.getHeight() != livePixels.getHeight()) {
 				liveTexture.allocate(livePixels.getWidth(), livePixels.getHeight(), GL_RGB8);
@@ -255,6 +259,7 @@ namespace ofxEdsdk {
 	ofPixels& Camera::getPhotoPixels() {
 		if(needToDecodePhoto) {
 			ofLoadImage(photoPixels, photoBuffer);
+            photoPixels.rotate90(rotateMode90);
 			needToDecodePhoto = false;
 		}
 		return photoPixels;

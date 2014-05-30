@@ -15,7 +15,7 @@ namespace ofxEdsdk {
 	public:
 		Camera();
 		~Camera();
-		bool setup(int deviceId = 0);
+		bool setup(int deviceId = 0, int orientationMode90 = 0);
 		
 		void update();
 		bool isFrameNew();
@@ -44,6 +44,8 @@ namespace ofxEdsdk {
 		EdsCameraRef camera;
 		
 		RateTimer fps;
+        
+        int rotateMode90;
 		
 		/*
 		 Live view data is read from the camera into liveBufferBack when DownloadEvfData()
