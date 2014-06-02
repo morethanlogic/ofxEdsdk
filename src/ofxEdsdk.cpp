@@ -83,11 +83,13 @@ namespace ofxEdsdk {
 			}
 			try {
 				Eds::CloseSession(camera);
+                Eds::SafeRelease(camera);
 				Eds::TerminateSDK();
 			} catch (Eds::Exception& e) {
 				ofLogError() << "There was an error destroying ofxEds::Camera: " << e.what();
 			}
 		}
+
 		unlock();
 		for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
 			delete liveBufferMiddle[i];
