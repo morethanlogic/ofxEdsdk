@@ -16,6 +16,9 @@ namespace ofxEdsdk {
 		Camera();
 		~Camera();
 		bool setup(int deviceId = 0, int orientationMode90 = 0);
+        
+        void turnOn();
+        void turnOff();
 		
 		void update();
 		bool isFrameNew();

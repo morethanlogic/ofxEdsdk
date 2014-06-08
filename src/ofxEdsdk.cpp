@@ -95,6 +95,47 @@ namespace ofxEdsdk {
 			delete liveBufferMiddle[i];
 		}
 	}
+    
+    
+    void Camera::turnOn() {
+        lock();
+		try {
+			Eds::OpenSession(camera);
+			connected = true;
+#ifdef TARGET_OSX
+			bTryInitLiveView = true;
+			initTime = ofGetElapsedTimeMillis();
+#else
+			Eds::StartLiveview(camera);
+#endif
+		} catch (Eds::Exception& e) {
+			ofLogError() << "There was an error opening the camera, or starting live view: " << e.what();
+			return;
+		}
+		lastResetTime = ofGetElapsedTimef();
+		unlock();
+    }
+    
+    void Camera::turnOff() {
+        lock();
+		if(connected) {
+			if(liveReady) {
+				Eds::EndLiveview(camera);
+			}
+			try {
+				Eds::CloseSession(camera);
+                //Eds::SafeRelease(camera);
+				//Eds::TerminateSDK();
+			} catch (Eds::Exception& e) {
+				ofLogError() << "There was an error destroying ofxEds::Camera: " << e.what();
+			}
+            
+            connected = false;
+
+		}
+        
+		unlock();
+    }
 	
 	bool Camera::setup(int deviceId, int orientationMode90) {
 		try {
