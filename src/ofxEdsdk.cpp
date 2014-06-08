@@ -67,7 +67,7 @@ namespace ofxEdsdk {
 #ifdef  TARGET_OSX
 	bTryInitLiveView(false),
 #endif
-	resetIntervalMinutes(15) {
+	resetIntervalMinutes(20) {
 		liveBufferMiddle.resize(OFX_EDSDK_BUFFER_SIZE);
 		for(int i = 0; i < liveBufferMiddle.maxSize(); i++) {
 			liveBufferMiddle[i] = new ofBuffer();
