@@ -62,6 +62,8 @@ namespace ofxEdsdk {
 	needToDecodePhoto(false),
 	needToUpdatePhoto(false),
 	photoDataReady(false),
+    needToStartRecording(false),
+    needToStopRecording(false),
 	needToSendKeepAlive(false),
 	needToDownloadImage(false),
 #ifdef  TARGET_OSX
@@ -247,48 +249,54 @@ namespace ofxEdsdk {
     
     
     
-    void Camera::setPathForVideo()
-    {
-        EdsError err = EDS_ERR_OK;
-        
-        EdsUInt32 saveTo = kEdsSaveTo_Camera;
-        err = EdsSetPropertyData(camera, kEdsPropID_SaveTo, 0, sizeof(saveTo) , &saveTo);
-        
-        if(err == EDS_ERR_OK){
-            ofLog() << "setPathForVideo() OK" << endl;
-        } else {
-            ofLog() << "setPathForVideo() BAD" << endl;
-        }
-    }
+//    void Camera::setPathForVideo()
+//    {
+//        EdsError err = EDS_ERR_OK;
+//        
+//        EdsUInt32 saveTo = kEdsSaveTo_Camera;
+//        err = EdsSetPropertyData(camera, kEdsPropID_SaveTo, 0, sizeof(saveTo) , &saveTo);
+//        
+//        if(err == EDS_ERR_OK){
+//            ofLog() << "setPathForVideo() OK" << endl;
+//        } else {
+//            ofLog() << "setPathForVideo() BAD" << endl;
+//        }
+//    }
     
     void Camera::startRecordVideo()
     {
-        //setPathForVideo();
+        lock();
+		needToStartRecording = true;
+		unlock();
         
-        EdsError err = EDS_ERR_OK;
-        
-        EdsUInt32 record_start = 4; // Begin movie shooting
-        err = EdsSetPropertyData(camera, kEdsPropID_Record, 0, sizeof(record_start), &record_start);
-        
-        if(err == EDS_ERR_OK){
-            ofLog() << "startRecordVideo() OK" << endl;
-        } else {
-            ofLog() << "startRecordVideo() BAD" << endl;
-        }
+//        EdsError err = EDS_ERR_OK;
+//        
+//        EdsUInt32 record_start = 4; // Begin movie shooting
+//        err = EdsSetPropertyData(camera, kEdsPropID_Record, 0, sizeof(record_start), &record_start);
+//        
+//        if(err == EDS_ERR_OK){
+//            ofLog() << "startRecordVideo() OK" << endl;
+//        } else {
+//            ofLog() << "startRecordVideo() BAD" << endl;
+//        }
     }
     
     void Camera::stopRecordVideo()
     {
-        EdsError err = EDS_ERR_OK;
+        lock();
+		needToStopRecording = true;
+		unlock();
         
-        EdsUInt32 record_stop = 0; // End movie shooting
-        err = EdsSetPropertyData(camera, kEdsPropID_Record, 0, sizeof(record_stop), &record_stop);
-        
-        if(err == EDS_ERR_OK){
-            ofLog() << "stopRecordVideo() OK" << endl;
-        } else {
-            ofLog() << "stopRecordVideo() BAD" << endl;
-        }
+//        EdsError err = EDS_ERR_OK;
+//        
+//        EdsUInt32 record_stop = 0; // End movie shooting
+//        err = EdsSetPropertyData(camera, kEdsPropID_Record, 0, sizeof(record_stop), &record_stop);
+//        
+//        if(err == EDS_ERR_OK){
+//            ofLog() << "stopRecordVideo() OK" << endl;
+//        } else {
+//            ofLog() << "stopRecordVideo() BAD" << endl;
+//        }
     }
     
     
@@ -440,6 +448,33 @@ namespace ofxEdsdk {
 					unlock();
 				} catch (Eds::Exception& e) {
 					ofLogError() << "Error while taking a picture: " << e.what();
+				}
+			}
+            
+            if(needToStartRecording) {
+				try {
+                    EdsUInt32 saveTo = kEdsSaveTo_Camera;
+                    EdsSetPropertyData(camera, kEdsPropID_SaveTo, 0, sizeof(saveTo) , &saveTo);
+                    
+                    EdsUInt32 record_start = 4; // Begin movie shooting
+                    EdsSetPropertyData(camera, kEdsPropID_Record, 0, sizeof(record_start), &record_start);
+					lock();
+					needToStartRecording = false;
+					unlock();
+				} catch (Eds::Exception& e) {
+					ofLogError() << "Error while beginning to record: " << e.what();
+				}
+			}
+            
+            if(needToStopRecording) {
+				try {
+                    EdsUInt32 record_stop = 0; // End movie shooting
+                    EdsSetPropertyData(camera, kEdsPropID_Record, 0, sizeof(record_stop), &record_stop);
+					lock();
+					needToStopRecording = false;
+					unlock();
+				} catch (Eds::Exception& e) {
+					ofLogError() << "Error while stopping to record: " << e.what();
 				}
 			}
 			

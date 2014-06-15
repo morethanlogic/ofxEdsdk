@@ -39,7 +39,7 @@ namespace ofxEdsdk {
 		ofPixels& getPhotoPixels();
 		ofTexture& getPhotoTexture();
         
-        void setPathForVideo();
+        //void setPathForVideo();
         void startRecordVideo();
         void stopRecordVideo();
 
@@ -89,7 +89,10 @@ namespace ofxEdsdk {
 		bool photoDataReady; // Photo data has been downloaded at least once.
 		bool needToSendKeepAlive; // Send keepalive next chance we get.
 		bool needToDownloadImage; // Download image next chance we get.
-		
+        
+        bool needToStartRecording; // threadedFunction() should start recording next chance it gets.
+        bool needToStopRecording; // threadedFunction() should start recording next chance it gets.
+
 		void threadedFunction();
 		
 		// the liveview needs to be reset every so often to avoid the camera turning off
